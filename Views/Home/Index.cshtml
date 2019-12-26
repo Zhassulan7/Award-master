@@ -1,0 +1,65 @@
+﻿@model Awards.Models.ViewModels.MainPage
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">First</th>
+            <th scope="col">Last</th>
+            <th scope="col">Handle</th>
+            <th scope="col">Изменить</th>
+            <th scope="col">Наградить</th>
+            <th scope="col">Награды</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Users.Count() != 0)
+        {
+            @foreach (var item in Model.Users)
+            {
+        <tr>
+            <th scope="row">@item.Id</th>
+            <td>@item.Name</td>
+            <td>@item.Age</td>
+            <td>
+                <form asp-action="DeleteUser" asp-controller="User" method="post">
+                    <input type="hidden" name="Id" value="@item.Id" />
+                    <input type="submit" value="Удалить пользователя" />
+                </form>
+            </td>
+            <td>
+                <form asp-action="EditUser" asp-controller="User" method="get">
+                    <input type="hidden" name="Id" value="@item.Id" />
+                    <input type="submit" value="Изменить данные" />
+                </form>
+            </td>
+            <td>
+                <form asp-action="AwardUser" asp-controller="User" method="post">
+                    <input type="hidden" name="userId" value="@item.Id" />
+                    <select name="awardId">
+                        @foreach (var award in Model.Awards)
+                        {
+                            <option value="@award.Id">@award.Title</option>
+                        }
+                    </select>
+                    <input type="submit" value="Наградить" />
+                </form>
+            </td>
+            <td>
+                @if (item.Awards != null)
+                {
+                    @foreach (var userAwards in item.Awards)
+                    {
+                        <p class="font-weight-bold">@userAwards.Title</p>
+                        <p>@userAwards.Description</p>
+                    }
+                }
+            </td>
+        </tr>
+            }
+        }
+    </tbody>
+</table>
