@@ -4,14 +4,16 @@ using Awards.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Awards.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20191226072628_AddedFieldsPhotoAndImageForAwardAndUser")]
+    partial class AddedFieldsPhotoAndImageForAwardAndUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -34,21 +36,6 @@ namespace Awards.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Awards");
-                });
-
-            modelBuilder.Entity("Awards.Models.ImagesData", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTime>("AddedTime");
-
-                    b.Property<string>("ImgPaths");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ImagesAndPhotos");
                 });
 
             modelBuilder.Entity("Awards.Models.User", b =>

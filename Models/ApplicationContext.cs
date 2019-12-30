@@ -14,5 +14,6 @@ namespace Awards.Models
         public DbSet<User> Users { get; set; }
         public DbSet<Award> Awards { get; set; }
         public DbSet<UsersAwards> UsersAwards { get; set; }
+        public DbSet<ImagesData> ImagesAndPhotos { get; set; }
     }
 }

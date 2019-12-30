@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Awards.Models;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Awards.Controllers
@@ -20,9 +23,11 @@ namespace Awards.Controllers
         }
         [HttpPost]
         public IActionResult AddUser(User user)
-        {
+        {         
             user.Age = user.BirthDate.Year - DateTime.Today.Year;
             user.Age *= -1;
+            var imageDownloader = new ImageHelper();
+            user.Photo = imageDownloader.WriteImage(user.PhotoData, _context);
             _context.Users.Add(user);
             _context.SaveChanges();
             return RedirectToAction("Index", "Home");
@@ -31,6 +36,7 @@ namespace Awards.Controllers
         public IActionResult DeleteUser(int Id)
         {
             var user = _context.Users.FirstOrDefault(u=>u.Id == Id);
+            new ImageHelper().DeletePhoto(user.Photo);
             _context.Remove(user);
             _context.SaveChanges();
             return RedirectToAction("Index", "Home");
@@ -45,6 +51,7 @@ namespace Awards.Controllers
         {
             user.Age = user.BirthDate.Year - DateTime.Today.Year;
             user.Age *= -1;
+            new ImageHelper().EditImage(user.PhotoData, user.Photo);
             _context.Users.Update(user);
             _context.SaveChanges();
             return RedirectToAction("Index", "Home");
@@ -52,8 +59,11 @@ namespace Awards.Controllers
         [HttpPost]
         public IActionResult AwardUser(int userId, int awardId)
         {
-            _context.UsersAwards.Add(new UsersAwards() { UserId = userId, AwardId = awardId });
-            _context.SaveChanges();
+            if (!_context.UsersAwards.Any(ua=>ua.UserId == userId && ua.AwardId == awardId))
+            {
+                _context.UsersAwards.Add(new UsersAwards() { UserId = userId, AwardId = awardId });
+                _context.SaveChanges();
+            }          
             return RedirectToAction("Index", "Home");
         }
         [HttpPost]

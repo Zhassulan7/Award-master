@@ -2,13 +2,17 @@
 @{
     ViewData["Title"] = "Home Page";
 }
-
+@if (Model.Users.Any())
+{
+    @Html.ActionLink("Получить пользователей в текстовом файле", "DownloadUsersTxt", "Home");
+}
 <table class="table">
     <thead>
         <tr>
             <th scope="col">#</th>
-            <th scope="col">First</th>
-            <th scope="col">Last</th>
+            <th scope="col">Аватарка</th>
+            <th scope="col">Имя</th>
+            <th scope="col">Возраст</th>
             <th scope="col">Handle</th>
             <th scope="col">Изменить</th>
             <th scope="col">Наградить</th>
@@ -20,46 +24,89 @@
         {
             @foreach (var item in Model.Users)
             {
-        <tr>
-            <th scope="row">@item.Id</th>
-            <td>@item.Name</td>
-            <td>@item.Age</td>
-            <td>
-                <form asp-action="DeleteUser" asp-controller="User" method="post">
-                    <input type="hidden" name="Id" value="@item.Id" />
-                    <input type="submit" value="Удалить пользователя" />
-                </form>
-            </td>
-            <td>
-                <form asp-action="EditUser" asp-controller="User" method="get">
-                    <input type="hidden" name="Id" value="@item.Id" />
-                    <input type="submit" value="Изменить данные" />
-                </form>
-            </td>
-            <td>
-                <form asp-action="AwardUser" asp-controller="User" method="post">
-                    <input type="hidden" name="userId" value="@item.Id" />
-                    <select name="awardId">
-                        @foreach (var award in Model.Awards)
+                <tr>
+                    <th scope="row">@item.Id</th>
+                    <th scope="row">
+                        <img src="@item.Photo" alt="Фото отсутствует" width="150" height="150" />
+                    </th>
+                    <td>@item.Name</td>
+                    <td>@item.Age</td>
+                    <td>
+                        <form asp-action="DeleteUser" asp-controller="User" method="post">
+                            <input type="hidden" name="Id" value="@item.Id" />
+                            <input type="submit" value="Удалить пользователя" />
+                        </form>
+                    </td>
+                    <td>
+                        <form asp-action="EditUser" asp-controller="User" method="get">
+                            <input type="hidden" name="Id" value="@item.Id" />
+                            <input type="submit" value="Изменить данные" />
+                        </form>
+                    </td>
+                    <td>
+                        <form asp-action="AwardUser" asp-controller="User" method="post">
+                            <input type="hidden" name="userId" value="@item.Id" />
+                            <select name="awardId">
+                                @foreach (var award in Model.Awards)
+                                {
+                                    <option value="@award.Id"> @award.Title</option>
+                                }
+                            </select>
+                            <input type="submit" value="Наградить" />
+                        </form>
+                    </td>
+                    <td>
+                        @if (item.Awards != null)
                         {
-                            <option value="@award.Id">@award.Title</option>
+                            @foreach (var userAwards in item.Awards)
+                            {
+                                <p>
+                                    <a href="#" data-toggle="modal" data-target="#exampleModal" onclick="ShowDescription('@userAwards.Title', '@userAwards.Description');" onmouseout="HideTitle('@userAwards.Id');" onmouseover="ShowTitle('@userAwards.Id');"><img src="@userAwards.Image" alt="фото" width="40" height="40" /></a>
+                                    <span id="@userAwards.Id" style="display: none; font-size: 12px; font-weight: 700;">@userAwards.Title</span>
+                                </p>
+                            }
                         }
-                    </select>
-                    <input type="submit" value="Наградить" />
-                </form>
-            </td>
-            <td>
-                @if (item.Awards != null)
-                {
-                    @foreach (var userAwards in item.Awards)
-                    {
-                        <p class="font-weight-bold">@userAwards.Title</p>
-                        <p>@userAwards.Description</p>
-                    }
-                }
-            </td>
-        </tr>
+                        @if (item.Awards.Count() == 0)
+                        {
+                            <p class="font-weight-bold">Награды отсутствуют</p>
+                        }
+                    </td>
+                </tr>
             }
         }
     </tbody>
 </table>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="titleInModal"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="descriptionInModal">
+                ...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script>
+    function ShowTitle(id) {
+        $("#" + id).show();
+    }
+    function HideTitle(id) {
+        $("#" + id).hide();
+    }
+    function ShowDescription(title, description) {
+        $("#titleInModal").html(title);
+        $("#descriptionInModal").html(description);
+    }
+</script>

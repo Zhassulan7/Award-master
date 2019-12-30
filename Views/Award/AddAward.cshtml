@@ -5,14 +5,20 @@
 
 <h1>AddAward</h1>
 
-<form asp-action="AddAward">
+<form asp-action="AddAward" enctype="multipart/form-data">
+    @Html.ValidationSummary(true)
     <div class="form-group">
-        <label asp-for="Title">Name</label>
+        <label asp-for="Title">Название награды</label>
         <input asp-for="Title" type="text" class="form-control" placeholder="Введите название награды">
+        @Html.ValidationMessageFor(m => m.Title)
     </div>
     <div class="form-group">
-        <label asp-for="Description">Password</label>
+        <label asp-for="Description">Описание</label>
         <input asp-for="Description" type="text" class="form-control" placeholder="Описание награды">
+    </div>
+    <div class="form-group">
+        <label asp-for="ImageData">Фотография</label>
+        <input required asp-for="ImageData" type="file" class="form-control">
     </div>
     <button type="submit" class="btn btn-primary">Submit</button>
 </form>
